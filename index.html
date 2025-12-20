@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Property - DreamEstate</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #16e2e2 0%, #11c7df 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .property-details {
+            flex: 1;
+            padding: 40px;
+            background: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .booking-form {
+            flex: 1;
+            padding: 40px;
+            background: #fff;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .property-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-tag {
+            font-size: 24px;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #11c7df;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e1e4e8;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            color: #2563eb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .property-image {
+                height: 200px;
+            }
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+            border-color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="property-details">
+            <span class="badge" id="propertyConfig">Loading...</span>
+            <img id="propertyImg" src="" alt="Property Image" class="property-image">
+            <h2 id="propertyName">Selected Property</h2>
+            <div class="price-tag" id="propertyPrice">₹0</div>
+            <p style="color: #666; line-height: 1.6;">
+                Experience luxury living with this premium property. Located in a prime area with specific amenities
+                designed for your comfort.
+            </p>
+
+            <h3 style="margin-top:20px; color:#333;">Room Gallery</h3>
+            <div id="roomGallery" class="gallery-grid">
+                <!-- Images injected via JS -->
+            </div>
+
+            <a href="website.html" class="back-link">← Back to Listings</a>
+        </div>
+
+        <div class="booking-form">
+            <h2>Book a Site Visit</h2>
+            <form onsubmit="submitBooking(event)">
+                <label>Your Name</label>
+                <input type="text" id="name" placeholder="John Doe" required>
+
+                <label>Phone Number</label>
+                <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+
+                <label>Preferred Date</label>
+                <input type="date" id="date" required>
+
+                <label>Message (Optional)</label>
+                <textarea rows="3" placeholder="I am interested in..."></textarea>
+
+                <button type="submit">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data for properties to fallback or validate
+        // In a real app, this might come from a DB or allow any params
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name') || "Unknown Property";
+        const price = urlParams.get('price') || "Contact for Price";
+        const img = urlParams.get('img') || "https://via.placeholder.com/400x300";
+        const config = urlParams.get('config') || "Luxury Listing";
+
+        document.getElementById('propertyName').innerText = name;
+        document.getElementById('propertyPrice').innerText = price;
+        document.getElementById('propertyImg').src = img;
+        document.getElementById('propertyConfig').innerText = config;
+
+        // Populate Room Gallery
+        const roomsParam = urlParams.get('rooms');
+        const galleryContainer = document.getElementById('roomGallery');
+
+        if (roomsParam) {
+            const roomImages = roomsParam.split(',');
+            roomImages.forEach(roomUrl => {
+                if (roomUrl.trim() !== "") {
+                    const imgElem = document.createElement('img');
+                    imgElem.src = roomUrl;
+                    imgElem.className = 'gallery-img';
+                    imgElem.onclick = function () {
+                        document.getElementById('propertyImg').src = this.src; // Click to view in main area
+                    };
+                    galleryContainer.appendChild(imgElem);
+                }
+            });
+        } else {
+            galleryContainer.innerHTML = "<p>No additional room images available.</p>";
+        }
+
+        function submitBooking(e) {
+            e.preventDefault();
+            const userName = document.getElementById('name').value;
+            alert(`Thanks ${userName}! Your booking request for ${name} has been received. We will contact you shortly.`);
+            window.location.href = 'website.html';
+        }
+    </script>
+
+</body>
+
+</html>
